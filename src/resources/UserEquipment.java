@@ -12,8 +12,6 @@ public class UserEquipment {
 
     /* Data for MaxMinScheduling */
     
-	public boolean[][] allocateRB;
-	
 	private ArrayList<Integer> maxMinRB = new ArrayList<Integer>();
 	private int nbRBNeeded = 0;
 	

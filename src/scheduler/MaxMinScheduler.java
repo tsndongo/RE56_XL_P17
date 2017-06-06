@@ -4,14 +4,16 @@ import java.util.ArrayList;
 
 import resources.UserEquipment;
 
-public class MaxMinScheduler {
+public class MaxMinScheduler extends Scheduler {
 
 	final static int TOTAL_NB_RB = 10;
+	final static int N = 10; // nb of allocations we do at once
 	
 	ArrayList <UserEquipment> Scheduler (ArrayList<UserEquipment> l) {
 		
+		UserEquipment[][] allocateRB = null;
 		int totalRBNeeded = 0;
-		int RBLeftToAllocate = TOTAL_NB_RB * 10; // because n consecutive allocations done at once
+		int RBLeftToAllocate = TOTAL_NB_RB * N; // because n consecutive allocations done at once
 		
 		for (UserEquipment ue : l)
 		{
@@ -19,7 +21,7 @@ public class MaxMinScheduler {
 			totalRBNeeded += ue.getNbRBNeeded();
 		}
 		
-		// We do the allocation as if we have 10 * total resource blocks
+		// We do the allocation as if we have N * total resource blocks
 		do {
 			for (UserEquipment ue : l)
 			{
@@ -36,8 +38,23 @@ public class MaxMinScheduler {
 		{
 			for (int rb : ue.getRB())
 			{
-				ue.allocateRB[rb%TOTAL_NB_RB][rb] = true; // sets a specific RB at a specific time for this UE
+				allocateRB[rb%TOTAL_NB_RB][rb] = ue; // sets a specific RB at a specific time for this UE
 			}
+		}
+		
+		multiplexing = null;
+		
+		for (int i = 0; i<N; ++i)
+			multiplexing.add(new ArrayList<UserEquipment>());
+		
+		int j = -1;
+		for (ArrayList<UserEquipment> timedMultiplexing : multiplexing)
+		{
+			++j;
+			
+			for (int i = 0; i<TOTAL_NB_RB; ++i)
+				if (allocateRB[j][i] != null)
+					timedMultiplexing.add(allocateRB[j][i]);
 		}
 		
 		return l;
