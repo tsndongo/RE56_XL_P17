@@ -41,14 +41,14 @@ public class MaxMinScheduler extends Scheduler {
 				allocateRB[rb%TOTAL_NB_RB][rb] = ue; // sets a specific RB at a specific time for this UE
 			}
 		}
-		
-		multiplexing = null;
+
+		finalResourceAllocation = null;
 		
 		for (int i = 0; i<N; ++i)
-			multiplexing.add(new ArrayList<UserEquipment>());
+			finalResourceAllocation.add(new ArrayList<UserEquipment>());
 		
 		int j = -1;
-		for (ArrayList<UserEquipment> timedMultiplexing : multiplexing)
+		for (ArrayList<UserEquipment> timedMultiplexing : finalResourceAllocation)
 		{
 			++j;
 			

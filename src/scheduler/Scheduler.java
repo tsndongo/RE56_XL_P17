@@ -9,6 +9,6 @@ import resources.UserEquipment;
  */
 public class Scheduler {
 	
-	ArrayList<ArrayList<UserEquipment>> multiplexing;
+	ArrayList<ArrayList<UserEquipment>> finalResourceAllocation;
 	
 }
