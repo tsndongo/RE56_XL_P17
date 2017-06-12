@@ -2,13 +2,14 @@ package scheduler;
 
 import java.util.ArrayList;
 
-import resources.UserEquipment;
+import resources.UE;
+import resources.UE;
 
 /**
  * Created by Syntiche on 5/16/2017.
  */
 public class Scheduler {
 	
-	ArrayList<ArrayList<UserEquipment>> finalResourceAllocation;
+	ArrayList<ArrayList<UE>> finalResourceAllocation;
 	
 }

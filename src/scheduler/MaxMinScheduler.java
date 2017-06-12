@@ -2,20 +2,20 @@ package scheduler;
 
 import java.util.ArrayList;
 
-import resources.UserEquipment;
+import resources.UE;
 
 public class MaxMinScheduler extends Scheduler {
 
 	final static int TOTAL_NB_RB = 10;
 	final static int N = 10; // nb of allocations we do at once
 	
-	ArrayList <UserEquipment> Scheduler (ArrayList<UserEquipment> l) {
-		
-		UserEquipment[][] allocateRB = null;
+	ArrayList <UE> Scheduler (ArrayList<UE> l) {
+
+		UE[][] allocateRB = null;
 		int totalRBNeeded = 0;
 		int RBLeftToAllocate = TOTAL_NB_RB * N; // because n consecutive allocations done at once
 		
-		for (UserEquipment ue : l)
+		for (UE ue : l)
 		{
 			ue.updateNbOfRBNeeded();
 			totalRBNeeded += ue.getNbRBNeeded();
@@ -23,7 +23,7 @@ public class MaxMinScheduler extends Scheduler {
 		
 		// We do the allocation as if we have N * total resource blocks
 		do {
-			for (UserEquipment ue : l)
+			for (UE ue : l)
 			{
 				if (RBLeftToAllocate > 0 && ue.getRB().size() < ue.getNbRBNeeded())
 				{
@@ -34,7 +34,7 @@ public class MaxMinScheduler extends Scheduler {
 		} while (RBLeftToAllocate != 0 || RBLeftToAllocate == totalRBNeeded);
 		
 		// We allocate the resource blocks over the n time periods
-		for (UserEquipment ue : l)
+		for (UE ue : l)
 		{
 			for (int rb : ue.getRB())
 			{
@@ -45,10 +45,10 @@ public class MaxMinScheduler extends Scheduler {
 		finalResourceAllocation = null;
 		
 		for (int i = 0; i<N; ++i)
-			finalResourceAllocation.add(new ArrayList<UserEquipment>());
+			finalResourceAllocation.add(new ArrayList<UE>());
 		
 		int j = -1;
-		for (ArrayList<UserEquipment> timedMultiplexing : finalResourceAllocation)
+		for (ArrayList<UE> timedMultiplexing : finalResourceAllocation)
 		{
 			++j;
 			
