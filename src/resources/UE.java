@@ -4,13 +4,24 @@ import java.util.Random;
 
 import javafx.geometry.Point2D;
 
-public class UE {
+public class UE implements Comparable<UE>{
     public static ArrayList<UE> UEs = new ArrayList<UE>();
     Point2D position;
     public int ueRequirements;
     public int id;
     private ArrayList<Integer> maxMinRB = new ArrayList<Integer>();
     private int nbRBNeeded = 0;
+
+    private int id;
+    private double distance;
+    private UserRequirement requirement;
+    private double throughputAverage;
+    private double throughput;
+    private boolean sendingData;
+    private double throughputPerRb;
+    private double note;
+    private int CQI;
+
 
     public void updateNbOfRBNeeded() {
         // calculate nb of RB needed based only on the data to receive
@@ -60,4 +71,78 @@ public class UE {
             UEs.get(i).showUE();
         }
     }
+
+    public int getCQI() {
+        return CQI;
+    }
+
+    public void setCQI(int CQI) {
+        this.CQI = CQI;
+    }
+
+    public double getThroughputAverage() {
+        return throughputAverage;
+    }
+
+    public double getThroughput() {
+        return throughput;
+    }
+
+    public void setThroughputAverage(double throughputAverage) {
+        this.throughputAverage = throughputAverage;
+    }
+
+    public void setThroughput(double throughput) {
+        this.throughput = throughput;
+    }
+
+    public boolean isSendingData() {
+        return sendingData;
+    }
+
+    public void setSendingData( boolean sendingData) {
+        this.sendingData = sendingData;
+    }
+
+    public double getThroughputPerRb() {
+        return throughputPerRb;
+    }
+
+    public void setThroughputPerRb(double throughputPerRb) {
+        this.throughputPerRb = throughputPerRb;
+    }
+
+
+    public double getNote() {
+        return note;
+    }
+
+    public void setNote(double note) {
+        this.note = note;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public UserRequirement getRequirement() {
+        return requirement;
+    }
+
+    @Override
+    public int compareTo(UE UserEquipment) {
+        if (this.getNote() > UserEquipment.getNote()){
+            return -1;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
+}
 }
