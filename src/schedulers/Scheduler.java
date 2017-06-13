@@ -1,8 +1,7 @@
-package scheduler;
+package schedulers;
 
 import java.util.ArrayList;
 
-import resources.UE;
 import resources.UE;
 
 /**
