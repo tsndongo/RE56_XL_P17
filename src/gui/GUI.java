@@ -134,7 +134,8 @@ public class GUI extends Application {
         simulationButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 UE.showUEs();
-                ArrayList<ArrayList<Integer>> results = antenna.roundRobin(UE.UEs);
+                //ArrayList<ArrayList<Integer>> results = antenna.roundRobin(UE.UEs);
+                ArrayList<ArrayList<Integer>> results = antenna.pf(UE.UEs);
                 GridPane schedulingPane = drawScheduling(results);
                 ScrollPane sp = new ScrollPane();
                 sp.setContent(schedulingPane);

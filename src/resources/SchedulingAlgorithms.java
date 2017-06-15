@@ -12,8 +12,8 @@ public interface SchedulingAlgorithms {
     int distanceDecreaseCQI = 21; // The CQI decrease every 21 pixels
     int nbRB = 6 ; //6 RB for a 1.4MHz bandwidth
 
-    ArrayList<ArrayList<Integer>> RoundRobin(ArrayList<UserEquipment> users);
-    ArrayList<ArrayList<Integer>> BestCQI (ArrayList<UserEquipment> users);
-    ArrayList<ArrayList<Integer>> MinMax(ArrayList<UserEquipment> users);
-    ArrayList<ArrayList<Integer>> PF(ArrayList<UserEquipment> users);
+    ArrayList<ArrayList<Integer>> roundRobin(ArrayList<UE> users);
+   //ArrayList<ArrayList<Integer>> bestCQI (ArrayList<UE> users);
+    //ArrayList<ArrayList<Integer>> minMax(ArrayList<UE> users);
+    ArrayList<ArrayList<Integer>> pf(ArrayList<UE> users);
 }

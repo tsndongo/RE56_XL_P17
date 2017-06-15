@@ -5,23 +5,22 @@ import java.util.Random;
 import javafx.geometry.Point2D;
 
 public class UE implements Comparable<UE>{
+    private static final double VIDEO_PROPORTION = 1/2;
+    private static final double VOICE_PROPORTION = 1/3;
+    private static final double DATA_PROPORTION = 1/6;
+
     public static ArrayList<UE> UEs = new ArrayList<UE>();
     Point2D position;
-    public int ueRequirements;
+    public UserRequirement ueRequirements;
     public int id;
     private ArrayList<Integer> maxMinRB = new ArrayList<Integer>();
     private int nbRBNeeded = 0;
-
-    private int id;
-    private double distance;
-    private UserRequirement requirement;
     private double throughputAverage;
     private double throughput;
     private boolean sendingData;
     private double throughputPerRb;
     private double note;
     private int CQI;
-
 
     public void updateNbOfRBNeeded() {
         // calculate nb of RB needed based only on the data to receive
@@ -48,18 +47,49 @@ public class UE implements Comparable<UE>{
     }
 
     //TODO To change function to take into consideration QoS
-    public int generateRandomRequirements(int min, int range){
+    public UserRequirement generateRandomRequirements(int min, int range){
         Random rand = new Random();
-        int  n = rand.nextInt(range) + min;
-        return n;
+        int data = rand.nextInt(range) + min;
+        int voice = rand.nextInt(range) + min;
+        int video = rand.nextInt(range) + min;
+        UserRequirement ueReq = new UserRequirement(data, voice, video);
+        return ueReq;
     }
 
     //TODO To change function to take into consideration QoS
     public void consumeData(int rbData) {
-        if (rbData <= ueRequirements)
-            this.ueRequirements -= rbData;
-        else
-            this.ueRequirements = 0;
+        int videoPartition = (int) (rbData * VIDEO_PROPORTION);
+        int voicePartition = (int) (rbData * VOICE_PROPORTION);
+        int dataPartition = rbData - videoPartition - voicePartition;
+
+        ueRequirements.setData(ueRequirements.getData() - dataPartition);
+        ueRequirements.setVoice(ueRequirements.getVoice() - voicePartition);
+        ueRequirements.setVoice(ueRequirements.getVoice() - voicePartition);
+
+        while (ueRequirements.containsNegativeValues()) {
+            if (ueRequirements.getVideo() < 0){
+                ueRequirements.setVoice(ueRequirements.getVideo() + ueRequirements.getVoice());
+                ueRequirements.setVideo(0);
+            }
+            else if (ueRequirements.getVoice() < 0){
+                if (ueRequirements.getVideo() < 0){
+                    ueRequirements.setVideo(ueRequirements.getVideo() + ueRequirements.getVoice());
+                }
+
+                else {
+                    ueRequirements.setData(ueRequirements.getData() + ueRequirements.getVoice());
+                }
+
+                ueRequirements.setVoice(0);
+            }
+            else if (ueRequirements.getData() < 0) {
+                if (ueRequirements.getVideo() > 0)
+                    ueRequirements.setVideo(ueRequirements.getVideo() + ueRequirements.getData());
+                else if (ueRequirements.getVoice() > 0)
+                    ueRequirements.setVoice(ueRequirements.getVoice() + ueRequirements.getData());
+                ueRequirements.setData(0);
+            }
+        }
     }
 
     public void showUE (){
@@ -104,33 +134,12 @@ public class UE implements Comparable<UE>{
         this.sendingData = sendingData;
     }
 
-    public double getThroughputPerRb() {
-        return throughputPerRb;
-    }
-
-    public void setThroughputPerRb(double throughputPerRb) {
-        this.throughputPerRb = throughputPerRb;
-    }
-
-
     public double getNote() {
         return note;
     }
 
     public void setNote(double note) {
         this.note = note;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public UserRequirement getRequirement() {
-        return requirement;
     }
 
     @Override
@@ -144,5 +153,11 @@ public class UE implements Comparable<UE>{
         }
     }
 
-}
+    public UserRequirement getUeRequirements() {
+        return ueRequirements;
+    }
+
+    public int getId() {
+        return id;
+    }
 }
