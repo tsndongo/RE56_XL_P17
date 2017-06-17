@@ -70,8 +70,8 @@ public class Antenna implements SchedulingAlgorithms {
                 //System.out.println(ueList.get(0).id);
                 subframeScheduling.add(ueList.get(0).id); //allocate the RB to the user
                 ueList.get(0).consumeData(RB_DATA_16QAM); //consome the data
-                //System.out.println("Req: " + ueList.get(0).ueRequirements);
-                if (ueList.get(0).ueRequirements.getTotalRequirements() != 0) //add the user to the queue if it's requirement isn't empty
+                //System.out.println("Req: " + ueList.get(0).getUeRequirements());
+                if (ueList.get(0).getUeRequirements().getTotalRequirements() != 0) //add the user to the queue if it's requirement isn't empty
                 {
                     ueList.add(ueList.get(0));
                     //System.out.println("Here");
@@ -196,5 +196,119 @@ public class Antenna implements SchedulingAlgorithms {
         return frame;
 
     }
+    
+    // MaxMin Fair Scheduler
+    public ArrayList <ArrayList<Integer>> maxMin (ArrayList<UE> l) {
+
+		ArrayList<ArrayList <Integer>> finalAllocation = new ArrayList<ArrayList <Integer>>();
+		ArrayList<ArrayList <Integer>> tempAllocation;
+
+		ArrayList<UE> UELeft = l;
+				
+		int N;
+		
+		do {
+			tempAllocation = new ArrayList<ArrayList <Integer>>();
+
+			//System.out.println("before UELeft : " + UELeft.size());
+		
+			ArrayList<UE> UEtoRemove = new ArrayList<UE>();
+			UEtoRemove.clear();
+			
+			for (UE ue : UELeft)
+			{
+				ue.getRB().clear();
+				if(ue.getUeRequirements().getTotalRequirements() <= 0)
+					UEtoRemove.add(ue);
+			}
+			
+			// Remove UE from list
+			for (UE ue : UEtoRemove)
+				UELeft.remove(ue);
+
+			//System.out.println("after UELeft : " + UELeft.size());
+			//System.out.println("totalRBNeeded : " + totalRBNeeded);
+			
+			// We set N according to number of UE
+			N = UELeft.size()/2;
+			
+			if (N == 0)
+				N = 1;
+			
+			//System.out.println("N = " + N);
+			
+			UE[][] allocateRB = new UE[RB_NUMBER][N];
+			int RBLeftToAllocate = RB_NUMBER * N; // because n consecutive allocations done at once
+			
+			// We do the allocation as if we have N * total resource blocks
+			do {
+				for (UE ue : UELeft)
+				{
+					if (RBLeftToAllocate > 0)
+					{
+						--RBLeftToAllocate;
+						ue.getRB().add(RBLeftToAllocate);
+		                ue.consumeData(RB_DATA_16QAM); //consome the data
+		                //System.out.println("RBLeftToAllocate : " + RBLeftToAllocate);
+					}
+				}
+                //System.out.println("RBLeftToAllocate : " + RBLeftToAllocate);
+
+				//System.out.println("size UE Left : " + UELeft.size());
+			    
+				/*try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
+				
+			} while (RBLeftToAllocate > 0 && isThereStillDataToSend(UELeft));
+
+			// We allocate the resource blocks over the n time periods
+			for (UE ue : UELeft)
+			{
+				for (int rb : ue.getRB())
+				{
+					//System.out.println(rb);
+					allocateRB[rb%RB_NUMBER][rb/RB_NUMBER] = ue; // sets a specific RB at a specific time for this UE
+				}
+			}
+			
+			for (int i = 0; i<N; ++i)
+				tempAllocation.add(new ArrayList<Integer>());
+			
+			int j = -1;
+			for (ArrayList<Integer> timedMultiplexing : tempAllocation)
+			{
+				++j;
+				
+				for (int i = 0; i<RB_NUMBER; ++i)
+				{
+					//System.out.println("i  "+ i + "j  " + j);
+					if (allocateRB[i][j] != null)
+						timedMultiplexing.add(allocateRB[i][j].id);
+				}
+			}
+			
+			for (ArrayList<Integer> alloc : tempAllocation) {
+				finalAllocation.add(alloc);
+			}
+			
+		} while (!UELeft.isEmpty());
+		
+		return finalAllocation;
+	}
+	
+	/* Method used in MaxMin scheduling to check if the list of UE we manipulate still needs to send data */
+    public boolean isThereStillDataToSend (ArrayList <UE> UELeft) {
+	    for (UE ue : UELeft)
+		{
+			if(ue.getUeRequirements().getTotalRequirements() > 0)
+				return true;
+		}
+	    return false;
+    }
+    
 }
 

@@ -11,7 +11,7 @@ public class UE implements Comparable<UE>{
 
     public static ArrayList<UE> UEs = new ArrayList<UE>();
     Point2D position;
-    public UserRequirement ueRequirements;
+    private UserRequirement ueRequirements;
     public int id;
     private ArrayList<Integer> maxMinRB = new ArrayList<Integer>();
     private int nbRBNeeded = 0;
