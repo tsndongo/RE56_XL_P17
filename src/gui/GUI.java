@@ -5,6 +5,7 @@ import java.util.Random;
 
 import javafx.geometry.Point2D;
 import resources.UE;
+import util.FileExport;
 import resources.Antenna;
 
 import javafx.application.Application;
@@ -135,7 +136,8 @@ public class GUI extends Application {
             @Override public void handle(ActionEvent e) {
                 UE.showUEs();
                 //ArrayList<ArrayList<Integer>> results = antenna.roundRobin(UE.UEs);
-                ArrayList<ArrayList<Integer>> results = antenna.pf(UE.UEs);
+                //ArrayList<ArrayList<Integer>> results = antenna.pf(UE.UEs);
+                ArrayList<ArrayList<Integer>> results = antenna.maxMin(UE.UEs);
                 GridPane schedulingPane = drawScheduling(results);
                 ScrollPane sp = new ScrollPane();
                 sp.setContent(schedulingPane);
@@ -144,6 +146,7 @@ public class GUI extends Application {
                 schedulingStage.setScene(schedulingScene);
                 schedulingStage.show();
                 antenna.showScheduling(results);
+                FileExport.write(results);
                 UE.UEs.clear();
             }
         });
