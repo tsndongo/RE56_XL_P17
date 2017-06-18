@@ -143,7 +143,6 @@ public class Antenna implements SchedulingAlgorithms {
                 user.setThroughput(0);
             }
 
-
             subframe = new ArrayList<>();
 
             //choose the user in each RB
@@ -203,11 +202,17 @@ public class Antenna implements SchedulingAlgorithms {
 		ArrayList<ArrayList <Integer>> finalAllocation = new ArrayList<ArrayList <Integer>>();
 		ArrayList<ArrayList <Integer>> tempAllocation;
 
+        for (UE user : l)
+            user.setCQI(this.calculateCQI(this.calculateDistance(user)));
+		
 		ArrayList<UE> UELeft = l;
 				
 		int N;
+		int iterationNumber = 0;
 		
 		do {
+			iterationNumber += 1;
+			
 			tempAllocation = new ArrayList<ArrayList <Integer>>();
 
 			//System.out.println("before UELeft : " + UELeft.size());
@@ -224,8 +229,10 @@ public class Antenna implements SchedulingAlgorithms {
 			
 			// Remove UE from list
 			for (UE ue : UEtoRemove)
+			{
+				ue.setIterationAtWhichDataIsEntirelySent(iterationNumber);
 				UELeft.remove(ue);
-
+			}
 			//System.out.println("after UELeft : " + UELeft.size());
 			//System.out.println("totalRBNeeded : " + totalRBNeeded);
 			
@@ -249,6 +256,7 @@ public class Antenna implements SchedulingAlgorithms {
 						--RBLeftToAllocate;
 						ue.getRB().add(RBLeftToAllocate);
 		                ue.consumeData(RB_DATA_16QAM); //consome the data
+		                ue.incrementUsedRBCounter();
 		                //System.out.println("RBLeftToAllocate : " + RBLeftToAllocate);
 					}
 				}
@@ -296,6 +304,14 @@ public class Antenna implements SchedulingAlgorithms {
 			}
 			
 		} while (!UELeft.isEmpty());
+		
+		for (UE user : UELeft)
+			user.setIterationAtWhichDataIsEntirelySent(iterationNumber); // the last(s) user(s) did not set this information
+
+		// calculation of throughput for all UE based on saved data
+        for (UE user : l)
+        	user.setThroughput(calculateThroughputPerRB(user.getCQI())*user.getUsedRBCounter()/user.getIterationAtWhichDataIsEntirelySent());
+
 		
 		return finalAllocation;
 	}

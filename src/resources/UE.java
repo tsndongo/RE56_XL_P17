@@ -14,22 +14,14 @@ public class UE implements Comparable<UE>{
     private UserRequirement ueRequirements;
     public int id;
     private ArrayList<Integer> maxMinRB = new ArrayList<Integer>();
-    private int nbRBNeeded = 0;
     private double throughputAverage;
     private double throughput;
     private boolean sendingData;
     private double throughputPerRb;
     private double note;
     private int CQI;
-
-    public void updateNbOfRBNeeded() {
-        // calculate nb of RB needed based only on the data to receive
-        nbRBNeeded = 0;
-    }
-
-    public int getNbRBNeeded() {
-        return nbRBNeeded;
-    }
+    private int usedRBCounter = 0;
+    private int iterationAtWhichDataIsEntirelySent = 0;
 
     public ArrayList<Integer> getRB() {
         return maxMinRB;
@@ -160,4 +152,21 @@ public class UE implements Comparable<UE>{
     public int getId() {
         return id;
     }
+
+	public void incrementUsedRBCounter() {
+		usedRBCounter +=1;
+	}
+
+	public int getIterationAtWhichDataIsEntirelySent() {
+		return iterationAtWhichDataIsEntirelySent;
+	}
+
+	public void setIterationAtWhichDataIsEntirelySent(int iterationAtWhichDataIsEntirelySent) {
+		this.iterationAtWhichDataIsEntirelySent = iterationAtWhichDataIsEntirelySent;
+	}
+
+	public int getUsedRBCounter() {
+		return usedRBCounter;
+	}
+
 }
