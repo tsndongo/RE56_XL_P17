@@ -17,7 +17,6 @@ public class UE implements Comparable<UE>{
     private double throughputAverage;
     private double throughput;
     private boolean sendingData;
-    private double throughputPerRb;
     private double note;
     private int CQI;
     private int usedRBCounter = 0;

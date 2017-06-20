@@ -14,6 +14,6 @@ public interface SchedulingAlgorithms {
 
     ArrayList<ArrayList<Integer>> roundRobin(ArrayList<UE> users);
    //ArrayList<ArrayList<Integer>> bestCQI (ArrayList<UE> users);
-    //ArrayList<ArrayList<Integer>> minMax(ArrayList<UE> users);
+    ArrayList<ArrayList<Integer>> maxMin(ArrayList<UE> users);
     ArrayList<ArrayList<Integer>> pf(ArrayList<UE> users);
 }

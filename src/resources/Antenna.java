@@ -115,7 +115,6 @@ public class Antenna implements SchedulingAlgorithms {
     public ArrayList<ArrayList<Integer>> pf(ArrayList<UE> usersList) {
         ArrayList<ArrayList<Integer>> frame = new ArrayList<>();
         ArrayList<Integer> subframe;
-        //ArrayList<Double> M = new ArrayList<>(users.size());
 
         ArrayList<UE> users = (ArrayList<UE>) usersList.clone();
         //calculate the CQI for each user
@@ -150,17 +149,16 @@ public class Antenna implements SchedulingAlgorithms {
             int i = 0;
             boolean continuer = true;
             while (i < nbRB && continuer) {
-                // for (int i = 0; i < nbRB; i++) {
                 if (j < users.size()) {
 
 
                     if (!users.get(j).getUeRequirements().isEmpty()) {
                         subframe.add(users.get(j).getId());
-                        // problem with the different throughput
-                        users.get(j).consumeData(1);
-                        //users.get(j).getUeRequirements().removeRequirement(calculateThroughputPerRB(users.get(j).getCQI()));
+                        int rbData = (int) calculateThroughputPerRB(users.get(j).getCQI());
+                        users.get(j).consumeData(rbData);
                         users.get(j).setSendingData(true);
                         users.get(j).setThroughput(users.get(j).getThroughput() + calculateThroughputPerRB(users.get(j).getCQI()));
+                        System.out.println(users.get(j).getId()+ "   :    " +  users.get(j).getNote());
                     } else {
                         users.remove(j);
                         j = j - 1;
@@ -180,13 +178,10 @@ public class Antenna implements SchedulingAlgorithms {
 
             //recalculation of the average throughput
             for (int l = 0; l < users.size(); l++) {
-                //System.out.println("entry throughput : " + users.get(j).getThroughputAverage());
                 users.get(l).setThroughputAverage((1 - (1 / k)) * users.get(l).getThroughputAverage());
-                // System.out.println("middle throughput : " + users.get(j).getThroughputAverage());
                 if (users.get(l).isSendingData()) {
                     users.get(l).setThroughputAverage(users.get(l).getThroughputAverage() + users.get(l).getThroughput() / k);
                 }
-                // System.out.println(" sortie throughput : " + users.get(j).getThroughputAverage());
             }
 
             frame.add(subframe);
@@ -235,7 +230,7 @@ public class Antenna implements SchedulingAlgorithms {
 			}
 			//System.out.println("after UELeft : " + UELeft.size());
 			//System.out.println("totalRBNeeded : " + totalRBNeeded);
-			
+
 			// We set N according to number of UE
 			N = UELeft.size()/2;
 			
